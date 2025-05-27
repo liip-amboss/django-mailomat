@@ -75,7 +75,7 @@ class MailomatEmailBackend(BaseEmailBackend):
         # Send request to Mailomat API
         try:
             response = requests.post(
-                f"{self.api_url}/send",
+                self.api_url,
                 json=data,
                 headers={
                     'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ class MailomatEmailBackend(BaseEmailBackend):
             return True
         except requests.RequestException as e:
             if not self.fail_silently:
-                logger.error(f"Failed to send email through Mailomat API: {e}")
+                logger.error(f'Failed to send email through Mailomat API: {e}')
                 raise
             return False
 
