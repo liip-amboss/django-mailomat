@@ -27,13 +27,17 @@ class MailomatEmailBackend(BaseEmailBackend):
             return email.split('<')[1].split('>')[0]
         return email
 
-    def _format_email(self, email: str, name: Optional[str] = None) -> str:
+    def _format_email(self, email: str, name: Optional[str] = None) -> dict:
         """
         Format email address with optional display name.
+        Returns a dictionary with email and name fields.
+        If no name is provided, uses the email address as the name.
         """
-        if name:
-            return formataddr((name, self._sanitize_email(email)))
-        return self._sanitize_email(email)
+        sanitized_email = self._sanitize_email(email)
+        return {
+            'email': sanitized_email,
+            'name': name if name else sanitized_email
+        }
 
     def _send(self, email_message: Union[EmailMessage, EmailMultiAlternatives]) -> bool:
         """
