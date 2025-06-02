@@ -6,6 +6,7 @@ import requests
 from django.conf import settings
 from django.core.mail.backends.base import BaseEmailBackend
 from django.core.mail.message import EmailMessage, EmailMultiAlternatives
+from django.utils.html import strip_tags
 
 logger = logging.getLogger(__name__)
 
@@ -48,9 +49,9 @@ class MailomatEmailBackend(BaseEmailBackend):
 
         # Prepare email data
         data = {
-            'to': [self._sanitize_email(recipient) for recipient in email_message.recipients()],
+            'to': [{'email': self._sanitize_email(recipient)} for recipient in email_message.recipients()],
             'subject': email_message.subject,
-            'text': email_message.body,
+            'text': strip_tags(email_message.body),
             'html': None,
             'from': self._format_email(
                 email_message.from_email,
