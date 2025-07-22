@@ -1,3 +1,4 @@
+import base64
 import logging
 from email.utils import formataddr
 from typing import Any, List, Optional, Union
@@ -71,10 +72,13 @@ class MailomatEmailBackend(BaseEmailBackend):
             data['attachments'] = []
             for filename, content, mimetype in email_message.attachments:
                 if isinstance(content, bytes):
+                    # Encode content as base64
+                    content_base64 = base64.b64encode(content).decode('ascii')
+                    
                     data['attachments'].append({
                         'filename': filename,
-                        'content': content.decode('utf-8'),
-                        'mimetype': mimetype
+                        'contentBase64': content_base64,
+                        'contentType': mimetype
                     })
 
         # Send request to Mailomat API
